@@ -15,18 +15,35 @@ form.addEventListener("submit", (evento)=> {
 
     const nome = evento.target.elements['nome']
     const quantidade = evento.target.elements['quantidade']
+    const existe = itens.find(elemento => elemento.nome === nome.value)
     
 
-    const itemAtual = {
-        "nome":nome.value,
-        "quantidade": quantidade.value
+    if (existe) {
+        const index = itens.indexOf(existe)
+        
+        itens[index].quantidade = parseInt(quantidade.value) + parseInt(itens[index].quantidade)
+        
+        const elements = document.querySelectorAll('.item')
+        const numeroItem = document.createElement('strong')
+        numeroItem.innerHTML = itens[index].quantidade
+        elements[index].innerHTML = ''
+        elements[index].appendChild(numeroItem)
+        elements[index].innerHTML += itens[index].nome  
+
+        localStorage.setItem("item", JSON.stringify(itens))
+
+    } else {
+        const itemAtual = {
+            "nome":nome.value,
+            "quantidade": quantidade.value
+        }
+    
+        itens.push(itemAtual)
+        localStorage.setItem("item", JSON.stringify(itens))
+    
+        criaElemento(itemAtual)
     }
-
-    itens.push(itemAtual)
-    localStorage.setItem("item", JSON.stringify(itens))
-
-    criaElemento(itemAtual)
-
+    
     nome.value = ""
     quantidade.value = ""
 })
@@ -34,7 +51,6 @@ form.addEventListener("submit", (evento)=> {
 
 function criaElemento(itemAtual) {
     
-
     //<li class="item"><strong>7</strong>Camisas</li>
     const novoItem = document.createElement('li')
     novoItem.classList.add('item')
